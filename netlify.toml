@@ -1,17 +1,11 @@
 [build]
+  environment = { PYTHON_VERSION = "3.9" }  # Specify Python version for the build environment
   functions = "functions"  # The directory containing your serverless functions
   command = "pip install -r requirements.txt"  # Install Python dependencies
 
 [functions]
-  # Runtime configuration should be an object
-  [functions.runtime]
+  # Runtime configuration for functions
   runtime = "python3.9"  # Specify Python version for serverless functions
-
-  # Example for adding external node modules if needed
-  # external_node_modules = [
-  #   "module-one",
-  #   "module-two"
-  # ]
 
 [[plugins]]
   package = "@netlify/plugin-python"  # Ensure the plugin is referenced to handle Python functions
