@@ -1,10 +1,10 @@
 [build]
-  functions = "backend/functions"  # The directory containing your serverless functions
+  functions = "functions"  # The directory containing your serverless functions
   command = "pip install -r requirements.txt"  # Install Python dependencies
 
 [functions]
-  "*":
-    runtime = "python3.8"  # Specify Python version for serverless functions
-
+  
+  
+  runtime = "python3.8" 
 [[plugins]]
   package = "@netlify/plugin-python"  # Ensure the plugin is referenced to handle Python functions
