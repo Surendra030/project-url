@@ -2,4 +2,3 @@ Flask
 selenium
 dropbox
 flask-lambda
-@netlify/plugin-python
