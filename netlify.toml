@@ -4,3 +4,7 @@
 [dev]
 functions = "functions"
 cmd = "pip install -r requirements.txt && netlify-lambda build functions"
+
+[[plugins]]
+package = "netlify-lambda"
+  
