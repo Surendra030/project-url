@@ -3,8 +3,15 @@
   command = "pip install -r requirements.txt"  # Install Python dependencies
 
 [functions]
-  
-  
-  runtime = "python3.8" 
+  # Runtime configuration should be an object
+  [functions.runtime]
+  runtime = "python3.8"  # Specify Python version for serverless functions
+
+  # Example for adding external node modules if needed
+  # external_node_modules = [
+  #   "module-one",
+  #   "module-two"
+  # ]
+
 [[plugins]]
   package = "@netlify/plugin-python"  # Ensure the plugin is referenced to handle Python functions
