@@ -21,8 +21,6 @@ def process_url():
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 
-# Wrap Flask app for Netlify function
-def handler(event, context):
-    from flask_lambda import FlaskLambda
-    lambda_app = FlaskLambda(app)
-    return lambda_app(event, context)
+# This is the handler function that will be invoked by Netlify
+def lambda_handler(event, context):
+    return app.lambda_handler(event, context)

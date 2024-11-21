@@ -1,10 +1,6 @@
 [build]
-    functions = "functions"
-    publish = "public"
-[dev]
-functions = "functions"
-cmd = "pip install -r requirements.txt && netlify-lambda build functions"
+  functions = "functions"  # Ensure that Netlify picks up functions in this folder
+  publish = "public"  # Point to the folder that contains your static files
 
-[[plugins]]
-package = "netlify-lambda"
-  
+[functions]
+  directory = "functions"  # Where your Flask function resides
