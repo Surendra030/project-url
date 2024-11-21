@@ -1,15 +1,10 @@
 [build]
-  # Specify the functions directory for your Python functions
-  functions = "functions" 
-  # Command to install dependencies and prepare the functions
-  command = "pip install -r requirements.txt"
-  # The publish directory for the static site (ensure this points to the right directory)
-  publish = "public"
+  functions = "backend/functions"  # The directory containing your serverless functions
+  command = "pip install -r requirements.txt"  # Install Python dependencies
 
 [functions]
   "*":
-    # Use Python runtime
-    runtime = "python3.8"
+    runtime = "python3.8"  # Specify Python version for serverless functions
 
 [[plugins]]
-  package = "@netlify/plugin-python"  # Ensure this plugin is being used for Python
+  package = "@netlify/plugin-python"  # Ensure the plugin is referenced to handle Python functions
