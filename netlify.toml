@@ -5,7 +5,7 @@
 
 [functions]
   '*':
-    runtime = "python3.8"  # or the version you want to use for your functions
+    runtime = "python3.8"  
 
-[[plugins]]
-  package = "@netlify/plugin-python"  # Ensure the plugin is listed here
+[plugins]
+  package = "@netlify/plugin-python" 
