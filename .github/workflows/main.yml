@@ -1,6 +1,6 @@
 name: Run Final Script Every 5h40m
 
-on:[push]
+on: [push]
   
 jobs:
   run-script:
