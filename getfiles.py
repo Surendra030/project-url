@@ -1,63 +1,96 @@
-import subprocess
-import re
 import os
+import time
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+import re
+# Set up Chrome options for headless mode and to handle downloads
+options = Options()
+options.add_argument("--headless")  # Uncomment this line if you want to run headless (without opening a window)
+options.add_argument("--disable-gpu")
+options.add_argument("--window-size=1920x1080")
+options.add_experimental_option("prefs", {
+    "download.default_directory": os.getcwd(),  # Save in the current working directory
+    "download.prompt_for_download": False,  # Disable download prompt
+    "directory_upgrade": True
+})
 
-def get_audio_streams(video_file):
-    """Get audio stream details from the video file."""
-    # Run ffmpeg command to get the stream details of the video file
-    command = ["ffmpeg", "-i", video_file]
-    result = subprocess.run(command, stderr=subprocess.PIPE, text=True)
-    
-    # Get raw output of ffmpeg command
-    ffmpeg_output = result.stderr
-    
-    # Find all audio streams using regex
-    audio_streams = []
-    for match in re.finditer(r"Stream #(\d+):(\d+)\((.*?)\): Audio: (\S+), (\d+) Hz, (\S+),", ffmpeg_output):
-        stream_index = match.group(2)
-        language = match.group(3)
-        codec = match.group(4)
-        sample_rate = match.group(5)
-        channels = match.group(6)
-        
-        audio_streams.append({
-            "index": stream_index,
-            "language": language,
-            "codec": codec,
-            "sample_rate": sample_rate,
-            "channels": channels
-        })
-    print(audio_streams)
-    
-    return audio_streams
+# Specify the path to your chromedriver
+chromedriver_path = r"C:\Users\ej818\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe" # Update this path to the actual location of chromedriver
 
-def extract_audio(video_file, audio_streams):
-    """Extract audio streams from video file and save them to MP3 files."""
-    for stream in audio_streams:
-        stream_index = stream["index"]
-        language = stream["language"]
-        stream_index = int(stream_index) - 1  # Adjust index for ffmpeg
-        # Construct the output filename based on language or stream index
-        output_filename = f"output_{language.lower()}.mp3" if language else f"output_{stream_index}.mp3"
-        # Construct the ffmpeg command to extract audio
-        command = [
-            "ffmpeg", "-i", video_file, 
-            "-map", f"0:a:{stream_index}", 
-            "-c:a", "libmp3lame", 
-            "-q:a", "2", 
-            output_filename
-        ]
-        
-        # Run the command to extract and save the audio
-        subprocess.run(command)
-        print(f"Extracted {language} audio to {output_filename}")
+# Use the Service class to specify the chromedriver path
+service = Service(executable_path=chromedriver_path)
+# Function to convert size string like '302M' or '5G' to bytes
+def convert_size_to_bytes(size_str):
+    size_str = size_str.strip().upper()
+    match = re.match(r'(\d+)([MGKB])', size_str)
+    if match:
+        size = int(match.group(1))
+        unit = match.group(2)
+        if unit == 'M':
+            return size * 1024 * 1024  # Convert MB to bytes
+        elif unit == 'G':
+            return size * 1024 * 1024 * 1024  # Convert GB to bytes
+        elif unit == 'K':
+            return size * 1024  # Convert KB to bytes
+    return 0  # Invalid size
+
+# Function to download file from Google Drive
+def download_file_from_drive(url):
+    # Set the path to chromedriver explicitly
+    driver = webdriver.Chrome(service=service, options=options)
+
+    downloaded_file_name = None
     
-    # Delete the video file permanently after extracting audio
     try:
-        os.remove(video_file)
-        print(f"Deleted video file: {video_file}")
-    except FileNotFoundError:
-        print(f"File not found: {video_file}")
-    except Exception as e:
-        print(f"Error while deleting file: {e}")
+        # Open the Google Drive link
+        driver.get(url)
+        time.sleep(2)  # Give the page a moment to load
 
+        # Extract the file name and size from the page content
+        page_source = driver.page_source
+        file_name_match = re.search(r'<a href="[^"]*">([^<]+)</a>\s?\(([\d\.]+[MGKB]+)\)', page_source)
+        if file_name_match:
+            downloaded_file_name = file_name_match.group(1)  # Extract file name
+            expected_size_str = file_name_match.group(2)  # Extract file size string
+            expected_size = convert_size_to_bytes(expected_size_str)  # Convert to bytes
+            print(f"Expected file name: {downloaded_file_name}")
+            print(f"Expected file size: {expected_size / (1024 * 1024)} MB")
+        else:
+            raise Exception("Could not extract file name and size from the page")
+
+        # Find the "Download anyway" button by its ID and click it
+        download_button = driver.find_element(By.ID, "uc-download-link")
+        download_button.click()
+        print("Download started...")
+
+        # Define the file path to check the download progress
+        file_path = os.path.join(os.getcwd(), downloaded_file_name)
+
+        # Wait for initial 30 seconds before checking the file size
+        time.sleep(40)
+        print("Initial 30 seconds completed...")
+
+        # Monitor the download progress
+        while True:
+            if os.path.exists(file_path):
+                current_size = os.path.getsize(file_path)  # Get the current size of the file in bytes
+                print(f"Current file size: {current_size / (1024 * 1024)} MB")
+                if current_size >= expected_size:  # Check if the downloaded file size meets the expected size
+                    print("Download complete!")
+                    break
+                else:
+                    print("Download still in progress, waiting 10 more seconds...")
+                    time.sleep(10)  # Wait for 10 more seconds before checking again
+            else:
+                print("File not found yet, waiting 10 more seconds...")
+                time.sleep(10)  # Wait for 10 more seconds before checking again
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+    finally:
+        driver.quit()
+
+    return downloaded_file_name

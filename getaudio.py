@@ -1,6 +1,6 @@
-# getaudio.py
 import subprocess
 import re
+import os
 
 def get_audio_streams(video_file):
     """Get audio stream details from the video file."""
@@ -51,3 +51,17 @@ def extract_audio(video_file, audio_streams):
         # Run the command to extract and save the audio
         subprocess.run(command)
         print(f"Extracted {language} audio to {output_filename}")
+    
+    # Delete the video file permanently after extracting audio
+    try:
+        os.remove(video_file)
+        print(f"Deleted video file: {video_file}")
+    except FileNotFoundError:
+        print(f"File not found: {video_file}")
+    except Exception as e:
+        print(f"Error while deleting file: {e}")
+
+# Example usage:
+# video_file = "example.mp4"
+# audio_streams = get_audio_streams(video_file)
+# extract_audio(video_file, audio_streams)
