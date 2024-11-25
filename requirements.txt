@@ -2,5 +2,6 @@ Flask
 selenium
 dropbox
 werkzeug==2.2.3
-
+mega.py
 flask-lambda
+pymongo
