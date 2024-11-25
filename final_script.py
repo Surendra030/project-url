@@ -66,42 +66,46 @@ def process_snippet(snippet, collection):
     try:
         # Step 1: Download the file from Google Drive
         drive_url = snippet["link"]
-        downloaded_file_name = download_file_from_drive(drive_url)
-        
-        if downloaded_file_name:
-            print(f"Downloaded file: {downloaded_file_name}")
+        google_drive_base_url = "https://drive.google.com/uc?id={}&export=download"
+        download_url = google_drive_base_url.format(drive_url)
+
+        if len(download_url) > 10:
+            downloaded_file_name = download_file_from_drive(download_url)
             
-            # Step 2: Extract audio streams from the file
-            audio_streams = get_audio_streams(downloaded_file_name)
-            
-            # Step 3: Extract and save audio files
-            extract_audio(downloaded_file_name, audio_streams)
-            
-            sharable_links = []
-            
-            # Step 4: Upload audio files to Mega Cloud
-            for audio_file in os.listdir():
-                if audio_file.endswith(".mp3"):  # Process only .mp3 files
-                    local_file_path = os.path.join(os.getcwd(), audio_file)
-                    sharable_link = upload_to_mega(local_file_path, MEGA_FOLDER)
-                    if sharable_link:
-                        sharable_links.append(sharable_link)
-            
-            # Step 5: Update the MongoDB document
-            update = {
-                "$set": {
-                    "file_need_to_be_downloaded": False,
-                    "workflow_accessing_url": False,
-                    "files_uploaded_to_db": True,
-                    "files_ready_to_download_from_db": True,
-                    "url_not_required": False,
-                    "sharable_link": sharable_links,
+            if downloaded_file_name:
+                print(f"Downloaded file: {downloaded_file_name}")
+                
+                # Step 2: Extract audio streams from the file
+                audio_streams = get_audio_streams(downloaded_file_name)
+                
+                # Step 3: Extract and save audio files
+                extract_audio(downloaded_file_name, audio_streams)
+                
+                sharable_links = []
+                
+                # Step 4: Upload audio files to Mega Cloud
+                for audio_file in os.listdir():
+                    if audio_file.endswith(".mp3"):  # Process only .mp3 files
+                        local_file_path = os.path.join(os.getcwd(), audio_file)
+                        sharable_link = upload_to_mega(local_file_path, MEGA_FOLDER)
+                        if sharable_link:
+                            sharable_links.append(sharable_link)
+                
+                # Step 5: Update the MongoDB document
+                update = {
+                    "$set": {
+                        "file_need_to_be_downloaded": False,
+                        "workflow_accessing_url": False,
+                        "files_uploaded_to_db": True,
+                        "files_ready_to_download_from_db": True,
+                        "url_not_required": False,
+                        "sharable_link": sharable_links,
+                    }
                 }
-            }
-            collection.update_one({"_id": snippet["_id"]}, update)
-            print(f"Updated MongoDB document for ID: {snippet['_id']}")
-        else:
-            print("Failed to download file.")
+                collection.update_one({"_id": snippet["_id"]}, update)
+                print(f"Updated MongoDB document for ID: {snippet['_id']}")
+            else:
+                print("Failed to download file.")
     except Exception as e:
         print(f"Error processing snippet with ID {snippet['_id']}: {e}")
 
