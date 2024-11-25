@@ -8,8 +8,7 @@ from getaudio import get_audio_streams, extract_audio
 mega = Mega()
 
 # Dropbox Access Token
-token_url ="afg154009@gmail.com_megaMac02335!_token_mongodb+srv://afg154005:gnLhPlgHpuQaFjvh@cluster0.0yvn2uk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-ACCESS_TOKEN = token_url
+token_url =os.getenv("M_TOKEN")
 str_lst = token_url.split("_token_")
 keys = str_lst[0].split("_")
 email = keys[0]
