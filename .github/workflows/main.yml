@@ -1,8 +1,7 @@
 name: Run Final Script Every 5h40m
 
-on:
-  schedule:
-    - cron: "40 */5 * * *" # Runs at every 5 hours and 40 minutes
+on: [push]
+ 
 
 jobs:
   run-script:
