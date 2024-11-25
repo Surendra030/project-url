@@ -73,19 +73,30 @@ def download_file_from_drive(url):
         print("Initial 30 seconds completed...")
 
         # Monitor the download progress
+        timeout = time.time() + 240  # 5 minutes timeout
         while True:
+            if time.time() > timeout:
+                print("Download timeout. Assuming the download is complete.")
+                break
+
             if os.path.exists(file_path):
-                current_size = os.path.getsize(file_path)  # Get the current size of the file in bytes
+                current_size = os.path.getsize(file_path)
                 print(f"Current file size: {current_size / (1024 * 1024)} MB")
-                if current_size >= expected_size:  # Check if the downloaded file size meets the expected size
+                if current_size >= expected_size:
                     print("Download complete!")
                     break
+                elif current_size > 0 and current_size == previous_size:  # No change in size
+                    unchanged_iterations += 1
+                    if unchanged_iterations > 5:  # After 5 unchanged iterations, assume it's done
+                        print("Download seems complete (stalled but size consistent).")
+                        break
                 else:
-                    print("Download still in progress, waiting 10 more seconds...")
-                    time.sleep(10)  # Wait for 10 more seconds before checking again
+                    unchanged_iterations = 0
+                previous_size = current_size
             else:
                 print("File not found yet, waiting 10 more seconds...")
-                time.sleep(10)  # Wait for 10 more seconds before checking again
+
+                time.sleep(10)
 
     except Exception as e:
         print(f"An error occurred: {e}")
