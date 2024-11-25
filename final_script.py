@@ -66,7 +66,7 @@ def process_snippet(snippet, collection):
     try:
         # Step 1: Download the file from Google Drive
         drive_url = snippet["link"]
-        google_drive_base_url = f"https://drive.google.com/uc?id={drive_url}&export=download"
+        google_drive_base_url = "https://drive.google.com/uc?id={}&export=download"
         download_url = google_drive_base_url.format(drive_url)
                          
         if len(download_url) > 10:
