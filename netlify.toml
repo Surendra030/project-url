@@ -1,6 +1,0 @@
-[build]
-  functions = "functions"  # Ensure that Netlify picks up functions in this folder
-  publish = "public"  # Point to the folder that contains your static files
-
-[functions]
-  directory = "functions"  # Where your Flask function resides
