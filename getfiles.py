@@ -7,7 +7,7 @@ from selenium.webdriver.common.by import By
 import re
 # Set up Chrome options for headless mode and to handle downloads
 options = Options()
-# options.add_argument("--headless")  # Uncomment this line if you want to run headless (without opening a window)
+options.add_argument("--headless")  # Uncomment this line if you want to run headless (without opening a window)
 options.add_argument("--disable-gpu")
 options.add_argument("--window-size=1920x1080")
 options.add_experimental_option("prefs", {
