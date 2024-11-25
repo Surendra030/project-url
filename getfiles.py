@@ -17,7 +17,7 @@ options.add_experimental_option("prefs", {
 })
 
 # Specify the path to your chromedriver
-chromedriver_path = r"./chromedriver"  # Update this path to the actual location of chromedriver
+chromedriver_path = r"chromedriver"  # Update this path to the actual location of chromedriver
 
 # Use the Service class to specify the chromedriver path
 service = Service(executable_path=chromedriver_path)
