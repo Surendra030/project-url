@@ -8,7 +8,7 @@ from getaudio import get_audio_streams, extract_audio
 mega = Mega()
 
 # Dropbox Access Token
-token_url = os.getenv("M_TOKEN")
+token_url ="afg154009@gmail.com_megaMac02335!_token_mongodb+srv://afg154005:gnLhPlgHpuQaFjvh@cluster0.0yvn2uk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 ACCESS_TOKEN = token_url
 str_lst = token_url.split("_token_")
 keys = str_lst[0].split("_")
@@ -23,7 +23,7 @@ MEGA_FOLDER = "getdata101"
 
 # MongoDB Collection
 DB_NAME = "links_data"
-COLLECTION_NAME = "links_lst"
+COLLECTION_NAME = "link_lst"
 
 # Function to login to Mega Cloud
 def get_mega_session():
@@ -66,9 +66,9 @@ def process_snippet(snippet, collection):
     try:
         # Step 1: Download the file from Google Drive
         drive_url = snippet["link"]
-        google_drive_base_url = "https://drive.google.com/uc?id={}&export=download"
+        google_drive_base_url = f"https://drive.google.com/uc?id={drive_url}&export=download"
         download_url = google_drive_base_url.format(drive_url)
-
+                         
         if len(download_url) > 10:
             downloaded_file_name = download_file_from_drive(download_url)
             
@@ -115,12 +115,11 @@ def main():
     client = MongoClient(MONGO_URL)
     db = client[DB_NAME]
     collection = db[COLLECTION_NAME]
-    
     # Fetch all snippets that need to be processed
     snippets = collection.find({"file_need_to_be_downloaded": True})
     
-    for snippet in snippets:
-        print(f"Processing snippet with ID: {snippet['_id']}")
+    for index,snippet in enumerate(snippets):
+        print(f"{index} : Processing snippet with ID: {snippet['_id']}")
         process_snippet(snippet, collection)
 
 if __name__ == "__main__":
