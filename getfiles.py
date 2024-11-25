@@ -54,10 +54,56 @@ def extract_audio(video_file, audio_streams):
     
     # Delete the video file permanently after extracting audio
     try:
+<<<<<<< HEAD
         os.remove(video_file)
         print(f"Deleted video file: {video_file}")
     except FileNotFoundError:
         print(f"File not found: {video_file}")
+=======
+        # Open the Google Drive link
+        driver.get(url)
+        time.sleep(2)  # Give the page a moment to load
+
+        # Extract the file name and size from the page content
+        page_source = driver.page_source
+        file_name_match = re.search(r'<a href="[^"]*">([^<]+)</a>\s?\(([\d\.]+[MGKB]+)\)', page_source)
+        if file_name_match:
+            downloaded_file_name = file_name_match.group(1)  # Extract file name
+            expected_size_str = file_name_match.group(2)  # Extract file size string
+            expected_size = convert_size_to_bytes(expected_size_str)  # Convert to bytes
+            print(f"Expected file name: {downloaded_file_name}")
+            print(f"Expected file size: {expected_size / (1024 * 1024)} MB")
+        else:
+            raise Exception("Could not extract file name and size from the page")
+
+        # Find the "Download anyway" button by its ID and click it
+        download_button = driver.find_element(By.ID, "uc-download-link")
+        download_button.click()
+        print("Download started...")
+
+        # Define the file path to check the download progress
+        file_path = os.path.join(os.getcwd(), downloaded_file_name)
+
+        # Wait for initial 30 seconds before checking the file size
+        time.sleep(70)
+        print("Initial 30 seconds completed...")
+
+        # Monitor the download progress
+        while True:
+            if os.path.exists(file_path):
+                current_size = os.path.getsize(file_path)  # Get the current size of the file in bytes
+                print(f"Current file size: {current_size / (1024 * 1024)} MB")
+                if current_size >= expected_size:  # Check if the downloaded file size meets the expected size
+                    print("Download complete!")
+                    break
+                else:
+                    print("Download still in progress, waiting 10 more seconds...")
+                    time.sleep(10)  # Wait for 10 more seconds before checking again
+            else:
+                print("File not found yet, waiting 10 more seconds...")
+                time.sleep(10)  # Wait for 10 more seconds before checking again
+
+>>>>>>> b181993ec9c339967e2bf7e720c6bec251d66b9a
     except Exception as e:
         print(f"Error while deleting file: {e}")
 
