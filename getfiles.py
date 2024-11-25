@@ -69,7 +69,7 @@ def download_file_from_drive(url):
         file_path = os.path.join(os.getcwd(), downloaded_file_name)
 
         # Wait for initial 30 seconds before checking the file size
-        time.sleep(30)
+        time.sleep(60)
         print("Initial 30 seconds completed...")
 
         # Monitor the download progress
