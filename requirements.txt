@@ -1,0 +1,6 @@
+Flask
+selenium
+dropbox
+werkzeug==2.2.3
+
+flask-lambda
