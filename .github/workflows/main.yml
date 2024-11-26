@@ -1,0 +1,37 @@
+name: Run Final Script Every 5h40m
+
+on: [push]
+  
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Install ffmpeg
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      # Step 3: Set up Python
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      # Step 4: Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Step 5: Run the Python script
+      - name: Run final_script.py
+        env:
+          M_TOKEN: ${{ secrets.M_TOKEN }}  # Ensure you set this secret in GitHub settings
+        run: |
+          python final_script.py
