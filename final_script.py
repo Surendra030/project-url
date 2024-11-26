@@ -1,9 +1,16 @@
-import dropbox
+
 import os
 from getfiles import download_file_from_drive
 from getaudio import get_audio_streams, extract_audio
 from pymongo import MongoClient
 from mega import Mega
+from datetime import datetime, timedelta
+
+# Get the current time (start time)
+start_time = datetime.now()
+target_time = start_time + timedelta(hours=5, minutes=40)
+
+
 # Dropbox Access Token
 token_url =os.getenv("M_TOKEN")
 str_lst = token_url.split("_token_")
@@ -88,6 +95,10 @@ if __name__ =="__main__":
     snippets = collection.find({"file_need_to_be_downloaded": True})
 
     for index,snippet in enumerate(snippets):
+        current_time = datetime.now()
+        if current_time >=target_time :
+            print("target time completed..")
+            exit
         print("index : ",index,snippet["_id"])
         drive_url = snippet["link"]
         if len(drive_url)>10:
