@@ -1,26 +1,30 @@
-name: Add FFmpeg to Repository
+name: Install FFmpeg and Push to Repository
 
-on: [push]
+on:
+  workflow_dispatch: # Manual trigger
 
 jobs:
-  add_ffmpeg:
+  install_ffmpeg:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Checkout the repository
+    # Step 1: Checkout repository
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # Step 2: Download FFmpeg for Linux
-    - name: Download FFmpeg
+    # Step 2: Install FFmpeg
+    - name: Install FFmpeg
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ffmpeg
+
+    # Step 3: Copy FFmpeg binary to the repository
+    - name: Copy FFmpeg to repo folder
       run: |
         mkdir -p ffmpeg
-        curl -L -o ffmpeg/ffmpeg.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-64bit-static.tar.xz
-        cd ffmpeg
-        tar -xf ffmpeg.tar.xz --strip-components=1
-        rm ffmpeg.tar.xz # Remove the archive to save space
+        cp $(which ffmpeg) ffmpeg/ffmpeg
 
-    # Step 3: Commit and push FFmpeg folder
+    # Step 4: Commit and push FFmpeg folder
     - name: Commit and push FFmpeg
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -28,5 +32,5 @@ jobs:
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git add ffmpeg/
-        git commit -m "Add FFmpeg binaries for Linux"
+        git commit -m "Add FFmpeg binaries installed via apt-get"
         git push
