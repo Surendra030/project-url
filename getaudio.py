@@ -81,7 +81,7 @@ def extract_audio(link_id,video_file, audio_streams):
             "-q:a", "2", 
             output_filename
         ]
-        
+        print(command)
         # Run the command to extract and save the audio
         subprocess.run(command)
         print(f"Extracted {language} audio to {output_filename}")

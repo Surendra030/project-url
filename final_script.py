@@ -69,22 +69,13 @@ def main(drive_url,snippet):
     # Step 1: Download the file from Google Drive
     downloaded_file_name = download_file_from_drive(drive_url)
     
-    if downloaded_file_name:
+    if True:
         print(f"Downloaded file: {downloaded_file_name}")
         # Step 2: Extract audio streams from the downloaded file
         audio_streams = get_audio_streams(downloaded_file_name)
         
         # # Step 3: Extract and save audio files
         extract_audio(snippet["link"],downloaded_file_name, audio_streams)
-        if os.path.exists(downloaded_file_name):
-            try:
-                os.remove(downloaded_file_name)
-                print(f"File '{downloaded_file_name}' has been removed permanently.")
-            except Exception as e:
-                print(f"Error occurred while deleting the file: {e}")
-        else:
-            print(f"File '{downloaded_file_name}' does not exist.")
-
         # Step 4: Upload audio files to Dropbox
         for audio_file in os.listdir():
 
@@ -92,7 +83,7 @@ def main(drive_url,snippet):
                 local_file_path = os.path.join(os.getcwd(), audio_file).replace("\\","/").split("/")[-1]
                 dropbox_file_path = "files_folder"
                 upload_to_mega(local_file_path, dropbox_file_path)
-
+        
         # Step 5: Update MongoDB exit_flag to True after processing
     else:
         print("File download failed.")
