@@ -105,7 +105,7 @@ if __name__ =="__main__":
     snippets = collection.find({"file_need_to_be_downloaded": True})
 
     for index,snippet in enumerate(snippets):
-        if index >=27:
+        if index >=25:
             current_time = datetime.now()
             if current_time >=target_time :
                 print("target time completed..")
@@ -115,5 +115,5 @@ if __name__ =="__main__":
             if len(drive_url)>10:
                 google_drive_base_url = f"https://drive.google.com/uc?id={drive_url}&export=download"
                 main(google_drive_base_url,snippet)
-        if index >=28:
+        if index >=26:
             exit
