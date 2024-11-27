@@ -71,34 +71,28 @@ def main(drive_url,snippet):
     downloaded_file_name = download_file_from_drive(drive_url)
     print(f"Downloaded file: {downloaded_file_name}")
     if downloaded_file_name:
-        print(os.listdir())
-        # Step 2: Extract audio streams from the downloaded file
-        audio_streams = get_audio_streams(downloaded_file_name)
-        
-        # # Step 3: Extract and save audio files
-        extract_audio(snippet["link"],downloaded_file_name, audio_streams)
-        # Step 4: Upload audio files to Dropbox
-        for audio_file in os.listdir():
-
-            if audio_file.endswith('.mp3'):  # Upload only the .mp3 files
-                local_file_path = os.path.join(os.getcwd(), audio_file).replace("\\","/").split("/")[-1]
-                dropbox_file_path = "files_folder"
-                upload_to_mega(local_file_path, dropbox_file_path)
-           
-                    # Step 5: Update MongoDB exit_flag to True after processing
-    else:
+            print(os.listdir())
+            # Step 2: Extract audio streams from the downloaded file
+            audio_streams = get_audio_streams(downloaded_file_name)
+            
+            # Step 3: Extract and save audio files
+            extract_audio(snippet["link"], downloaded_file_name, audio_streams)
+            
+            # Step 4: Upload audio files to Dropbox
+            for audio_file in os.listdir():
+                if audio_file.endswith('.mp3'):  # Upload only the .mp3 files
+                    local_file_path = os.path.join(os.getcwd(), audio_file).replace("\\", "/").split("/")[-1]
+                    dropbox_file_path = "files_folder"
+                    upload_to_mega(local_file_path, dropbox_file_path)
+            
+            # Step 5: Update MongoDB exit_flag to True after processing
+            print(f"Processing completed for {downloaded_file_name}")
+            
+            # ** Delete .mkv and .mp3 files after every 10 indexes **
+            
+    else:   
         print("File download failed.")
 
-    # Step 2: Remove the file permanently
-    if os.path.exists(downloaded_file_name):
-        try:
-            os.remove(downloaded_file_name)
-            print(f"File '{downloaded_file_name}' has been removed permanently.")
-        except Exception as e:
-                print(f"Error occurred while deleting the file: {e}")
-    else:
-        print(f"File '{downloaded_file_name}' does not exist.")
-                 
 
 
 if __name__ =="__main__":
@@ -115,5 +109,15 @@ if __name__ =="__main__":
             if len(drive_url)>10:
                 google_drive_base_url = f"https://drive.google.com/uc?id={drive_url}&export=download"
                 main(google_drive_base_url,snippet)
-        if index >=26:
+        if index >=30:
             exit
+        if index % 10 == 0:  # Delete every 10th index
+                print("Deleting .mkv and .mp3 files...")
+                for file in os.listdir():
+                    if file.endswith('.mkv') or file.endswith('.mp3'):
+                        try:
+                            os.remove(file)
+                            print(f"Deleted {file}")
+                        except Exception as e:
+                            print(f"Error deleting {file}: {e}")
+            
