@@ -84,25 +84,28 @@ def main(drive_url,snippet):
                 local_file_path = os.path.join(os.getcwd(), audio_file).replace("\\","/").split("/")[-1]
                 dropbox_file_path = "files_folder"
                 upload_to_mega(local_file_path, dropbox_file_path)
-        # Step 2: Remove the file permanently
-            if os.path.exists(downloaded_file_name):
-                try:
-                    os.remove(downloaded_file_name)
-                    print(f"File '{downloaded_file_name}' has been removed permanently.")
-                except Exception as e:
-                    print(f"Error occurred while deleting the file: {e}")
-            else:
-                print(f"File '{downloaded_file_name}' does not exist.")
+           
                     # Step 5: Update MongoDB exit_flag to True after processing
     else:
         print("File download failed.")
+
+    # Step 2: Remove the file permanently
+    if os.path.exists(downloaded_file_name):
+        try:
+            os.remove(downloaded_file_name)
+            print(f"File '{downloaded_file_name}' has been removed permanently.")
+        except Exception as e:
+                print(f"Error occurred while deleting the file: {e}")
+    else:
+        print(f"File '{downloaded_file_name}' does not exist.")
+                 
 
 
 if __name__ =="__main__":
     snippets = collection.find({"file_need_to_be_downloaded": True})
 
     for index,snippet in enumerate(snippets):
-        if index >=25:
+        if index >=27:
             current_time = datetime.now()
             if current_time >=target_time :
                 print("target time completed..")
@@ -112,4 +115,5 @@ if __name__ =="__main__":
             if len(drive_url)>10:
                 google_drive_base_url = f"https://drive.google.com/uc?id={drive_url}&export=download"
                 main(google_drive_base_url,snippet)
-            
+        if index >=28:
+            exit
