@@ -77,7 +77,10 @@ def main(drive_url,snippet):
             
             # Step 3: Extract and save audio files
             flag = extract_audio(snippet["link"], downloaded_file_name, audio_streams)
-            if flag : print("audio files extracted..")
+            if flag :
+                print("audio files extracted..")
+            else:
+                print("none..")
             # Step 4: Upload audio files to Dropbox
             for audio_file in os.listdir():
                 if audio_file.endswith('.mp3'):  # Upload only the .mp3 files
