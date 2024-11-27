@@ -1,7 +1,7 @@
 # getaudio.py
 import subprocess
 import re
-
+import os
 def get_audio_streams(file_name):
     """
     Extract audio stream details from a media file using FFmpeg.
@@ -84,9 +84,11 @@ def extract_audio(link_id,video_file, audio_streams):
             "-q:a", "2", 
             output_filename
         ]
-        print(command)
-        # Run the command to extract and save the audio
-        subprocess.run(command)
+        
         print(f"Extracted {language} audio to {output_filename}")
+        subprocess.run(command)
+        print(os.listdir())
+    return True
+
 
 

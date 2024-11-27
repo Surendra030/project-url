@@ -71,13 +71,13 @@ def main(drive_url,snippet):
     downloaded_file_name = download_file_from_drive(drive_url)
     print(f"Downloaded file: {downloaded_file_name}")
     if downloaded_file_name:
+            
             # Step 2: Extract audio streams from the downloaded file
             audio_streams = get_audio_streams(downloaded_file_name)
             
             # Step 3: Extract and save audio files
-            extract_audio(snippet["link"], downloaded_file_name, audio_streams)
-            print(os.listdir())
-
+            flag = extract_audio(snippet["link"], downloaded_file_name, audio_streams)
+            if flag : print("audio files extracted..")
             # Step 4: Upload audio files to Dropbox
             for audio_file in os.listdir():
                 if audio_file.endswith('.mp3'):  # Upload only the .mp3 files
@@ -86,7 +86,6 @@ def main(drive_url,snippet):
                     upload_to_mega(local_file_path, dropbox_file_path)
             
             # Step 5: Update MongoDB exit_flag to True after processing
-            print(f"Processing completed for {downloaded_file_name}")
             
             # ** Delete .mkv and .mp3 files after every 10 indexes **
             
@@ -102,7 +101,6 @@ if __name__ =="__main__":
         if index >=25:
             current_time = datetime.now()
             if current_time >=target_time :
-                print("target time completed..")
                 exit
             print("index : ",index,snippet["_id"])
             drive_url = snippet["link"]
