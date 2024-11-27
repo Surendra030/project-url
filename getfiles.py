@@ -71,7 +71,7 @@ def download_file_from_drive(url):
         print("Download started...")
 
         # Define the file path to check the download progress
-        file_path = os.path.join(os.getcwd(), downloaded_file_name)
+        file_path = os.path.join(os.getcwd(), url)
         time.sleep(30) if (expected_size / (1024 * 1024)) >= 500 else time.sleep(15)
 
         print("Initial 20 seconds completed...")
