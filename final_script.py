@@ -13,6 +13,7 @@ target_time = start_time + timedelta(hours=5, minutes=40)
 
 # Dropbox Access Token
 token_url =os.getenv("M_TOKEN")
+
 str_lst = token_url.split("_token_")
 keys = str_lst[0].split("_")
 email = keys[0]
@@ -68,9 +69,10 @@ def upload_to_mega(local_file_path, mega_folder_path):
 def main(drive_url,snippet):
     # Step 1: Download the file from Google Drive
     downloaded_file_name = download_file_from_drive(drive_url)
-    print(downloaded_file_name)
+    print(f"Downloaded file: {downloaded_file_name}")
     if downloaded_file_name:
-        print(f"Downloaded file: {downloaded_file_name}")
+        Extension = downloaded_file_name.split(".")[0]
+        downloaded_file_name = f"{snippet["link"]}.{Extension}"
         # Step 2: Extract audio streams from the downloaded file
         audio_streams = get_audio_streams(downloaded_file_name)
         
@@ -83,8 +85,16 @@ def main(drive_url,snippet):
                 local_file_path = os.path.join(os.getcwd(), audio_file).replace("\\","/").split("/")[-1]
                 dropbox_file_path = "files_folder"
                 upload_to_mega(local_file_path, dropbox_file_path)
-        
-        # Step 5: Update MongoDB exit_flag to True after processing
+        # Step 2: Remove the file permanently
+            if os.path.exists(downloaded_file_name):
+                try:
+                    os.remove(downloaded_file_name)
+                    print(f"File '{downloaded_file_name}' has been removed permanently.")
+                except Exception as e:
+                    print(f"Error occurred while deleting the file: {e}")
+            else:
+                print(f"File '{downloaded_file_name}' does not exist.")
+                    # Step 5: Update MongoDB exit_flag to True after processing
     else:
         print("File download failed.")
 
