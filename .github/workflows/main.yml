@@ -1,37 +1,33 @@
-name: Run Final Script Every 5h40m
+name: Add FFmpeg to Repository
 
-on: [push]
-  
+on:
+  workflow_dispatch: # Allows manual triggering of the workflow.
+
 jobs:
-  run-script:
+  add_ffmpeg:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v3
+    # Step 1: Checkout the repository
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      # Step 2: Install ffmpeg
-      - name: Install ffmpeg
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg
+    # Step 2: Download FFmpeg for Linux
+    - name: Download FFmpeg
+      run: |
+        mkdir -p ffmpeg
+        curl -L -o ffmpeg/ffmpeg.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-64bit-static.tar.xz
+        cd ffmpeg
+        tar -xf ffmpeg.tar.xz --strip-components=1
+        rm ffmpeg.tar.xz # Remove the archive to save space
 
-      # Step 3: Set up Python
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.9
-
-      # Step 4: Install dependencies
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      # Step 5: Run the Python script
-      - name: Run final_script.py
-        env:
-          M_TOKEN: ${{ secrets.M_TOKEN }}  # Ensure you set this secret in GitHub settings
-        run: |
-          python final_script.py
+    # Step 3: Commit and push FFmpeg folder
+    - name: Commit and push FFmpeg
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add ffmpeg/
+        git commit -m "Add FFmpeg binaries for Linux"
+        git push
