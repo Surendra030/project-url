@@ -15,7 +15,9 @@ def get_audio_streams(file_name):
     try:
         # Run the ffmpeg command and capture the output
         result = subprocess.run(
-            ["ffmpeg", "-i", file_name],
+            ["./ffmpeg/ffmpeg",  # Use relative path to the FFmpeg binary in the repo
+
+              "-i", file_name],
             stderr=subprocess.PIPE, stdout=subprocess.DEVNULL, text=True
         )
         output = result.stderr
@@ -75,7 +77,8 @@ def extract_audio(link_id,video_file, audio_streams):
         output_filename = f"{link_id}_{language.lower()}.mp3" if language else f"output_{stream_index}.mp3"
         # Construct the ffmpeg command to extract audio
         command = [
-            "ffmpeg", "-i", video_file, 
+            "./ffmpeg/ffmpeg",  # Use relative path to the FFmpeg binary in the repo
+            "-i", video_file, 
             "-map", stream_index, 
             "-c:a", "libmp3lame", 
             "-q:a", "2", 
