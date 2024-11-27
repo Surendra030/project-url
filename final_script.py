@@ -25,7 +25,6 @@ db = client["links_data"]
 collection = db["link_lst"]
 mega = Mega()
 
-size_count = 0
 
 # Function to upload file to Dropbox
 
@@ -77,7 +76,15 @@ def main(drive_url,snippet):
         
         # # Step 3: Extract and save audio files
         extract_audio(snippet["link"],downloaded_file_name, audio_streams)
-        print(os.listdir())
+        if os.path.exists(downloaded_file_name):
+            try:
+                os.remove(downloaded_file_name)
+                print(f"File '{downloaded_file_name}' has been removed permanently.")
+            except Exception as e:
+                print(f"Error occurred while deleting the file: {e}")
+        else:
+            print(f"File '{downloaded_file_name}' does not exist.")
+
         # Step 4: Upload audio files to Dropbox
         for audio_file in os.listdir():
 
@@ -85,7 +92,7 @@ def main(drive_url,snippet):
                 local_file_path = os.path.join(os.getcwd(), audio_file).replace("\\","/").split("/")[-1]
                 dropbox_file_path = "files_folder"
                 upload_to_mega(local_file_path, dropbox_file_path)
-        
+
         # Step 5: Update MongoDB exit_flag to True after processing
     else:
         print("File download failed.")
@@ -95,13 +102,14 @@ if __name__ =="__main__":
     snippets = collection.find({"file_need_to_be_downloaded": True})
 
     for index,snippet in enumerate(snippets):
-        current_time = datetime.now()
-        if current_time >=target_time :
-            print("target time completed..")
-            exit
-        print("index : ",index,snippet["_id"])
-        drive_url = snippet["link"]
-        if len(drive_url)>10:
-            google_drive_base_url = f"https://drive.google.com/uc?id={drive_url}&export=download"
-            main(google_drive_base_url,snippet)
-        
+        if index >=25:
+            current_time = datetime.now()
+            if current_time >=target_time :
+                print("target time completed..")
+                exit
+            print("index : ",index,snippet["_id"])
+            drive_url = snippet["link"]
+            if len(drive_url)>10:
+                google_drive_base_url = f"https://drive.google.com/uc?id={drive_url}&export=download"
+                main(google_drive_base_url,snippet)
+            
