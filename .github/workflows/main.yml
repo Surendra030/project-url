@@ -1,7 +1,6 @@
 name: Add FFmpeg to Repository
 
-on:
-  workflow_dispatch: # Allows manual triggering of the workflow.
+on: [push]
 
 jobs:
   add_ffmpeg:
