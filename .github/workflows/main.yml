@@ -1,7 +1,6 @@
 name: Install FFmpeg and Push to Repository
 
-on:
-  workflow_dispatch: # Manual trigger
+on: [push]
 
 jobs:
   install_ffmpeg:
