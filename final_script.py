@@ -71,7 +71,7 @@ def main(drive_url,snippet):
     downloaded_file_name = download_file_from_drive(drive_url)
     print(f"Downloaded file: {downloaded_file_name}")
     if downloaded_file_name:
-        
+        print(os.listdir())
         # Step 2: Extract audio streams from the downloaded file
         audio_streams = get_audio_streams(downloaded_file_name)
         
