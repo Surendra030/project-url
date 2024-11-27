@@ -72,7 +72,8 @@ def main(drive_url,snippet):
     print(f"Downloaded file: {downloaded_file_name}")
     if downloaded_file_name:
         Extension = downloaded_file_name.split(".")[0]
-        downloaded_file_name = f"{snippet["link"]}.{Extension}"
+        downloaded_file_name = f'{snippet["link"]}.{Extension}'
+
         # Step 2: Extract audio streams from the downloaded file
         audio_streams = get_audio_streams(downloaded_file_name)
         
