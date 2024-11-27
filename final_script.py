@@ -68,7 +68,7 @@ def upload_to_mega(local_file_path, mega_folder_path):
 def main(drive_url,snippet):
     # Step 1: Download the file from Google Drive
     downloaded_file_name = download_file_from_drive(drive_url)
-    
+    print(downloaded_file_name)
     if downloaded_file_name:
         print(f"Downloaded file: {downloaded_file_name}")
         # Step 2: Extract audio streams from the downloaded file
